@@ -1,0 +1,40 @@
+{
+  "name": "deepseek-skills",
+  "version": "1.0.0",
+  "description": "8 skills de ingeniería senior para DeepSeek R1. Protocolo de activación selectiva que maximiza el rendimiento del modelo sin saturar el contexto.",
+  "keywords": [
+    "deepseek",
+    "deepseek-r1",
+    "ai",
+    "ai-skills",
+    "coding-assistant",
+    "agent",
+    "agentic",
+    "software-engineering",
+    "code-quality",
+    "debugging",
+    "testing",
+    "architecture",
+    "performance",
+    "code-review"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bin": {
+    "deepseek-skills": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    ".agents/",
+    "AGENTS.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

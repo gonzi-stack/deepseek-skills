@@ -7,6 +7,7 @@
 Protocolo de activación selectiva que maximiza el rendimiento del modelo sin saturar su ventana de contexto.
 
 [![npm version](https://img.shields.io/npm/v/deepseek-skills.svg)](https://www.npmjs.com/package/deepseek-skills)
+[![GitHub](https://img.shields.io/github/stars/gonzi-stack/deepseek-skills?style=social)](https://github.com/gonzi-stack/deepseek-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
@@ -39,11 +40,16 @@ Eso es todo. Se copian dos cosas a tu proyecto:
 ### Opciones
 
 ```bash
-npx deepseek-skills          # Instalar en el directorio actual
-npx deepseek-skills --force   # Sobrescribir si ya existen
-npx deepseek-skills --help    # Ver ayuda
-npx deepseek-skills list      # Listar las skills con tamaños
+npx deepseek-skills            # Instalar en el directorio actual
+npx deepseek-skills --force    # Sobrescribir si ya existen
+npx deepseek-skills --help     # Ver ayuda
+npx deepseek-skills list       # Listar las skills con tamaños
 ```
+
+> **Alternativa (desde GitHub directo):**
+> ```bash
+> npx github:gonzi-stack/deepseek-skills
+> ```
 
 ---
 

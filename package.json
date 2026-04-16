@@ -18,11 +18,11 @@
     "performance",
     "code-review"
   ],
-  "author": "",
+  "author": "Gonzalo",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/gonzi-stack/deepseek-skills.git"
   },
   "bin": {
     "deepseek-skills": "bin/cli.js"

@@ -2,7 +2,7 @@
 
 # 🧠 DeepSeek Skills
 
-**8 skills de ingeniería senior para DeepSeek R1**
+**8 skills de ingeniería senior + 2 skills de diseño UX/UI para DeepSeek R1**
 
 Protocolo de activación selectiva que maximiza el rendimiento del modelo sin saturar su ventana de contexto.
 
@@ -16,11 +16,26 @@ Protocolo de activación selectiva que maximiza el rendimiento del modelo sin sa
 
 ## ¿Qué es esto?
 
-Un set de **8 skills profundas y detalladas** que transforman a DeepSeek R1 en un agente de ingeniería senior. Cada skill es un protocolo estructurado por fases, con checklists, ejemplos reales, y anti-patrones documentados.
+Un set de **10 skills profundas y detalladas** que transforman a DeepSeek R1 en un agente de ingeniería senior con capacidades de diseño UX/UI. Cada skill es un protocolo estructurado por fases, con checklists, ejemplos reales, y anti-patrones documentados.
 
-El problema: las skills son extensas (~10-16 KB cada una) y el contexto de R1 es limitado.
+El problema: las skills son extensas (~10-28 KB cada una) y el contexto de R1 es limitado.
 
 La solución: un **AGENTS.md** con un **Protocolo de Activación Selectiva (PAS)** que le indica al modelo cómo clasificar cada tarea y cargar **solo las 2-3 skills relevantes**, aprovechando su potencia completa sin desperdiciar tokens.
+
+---
+
+## 🆕 Nuevo: Skills de Diseño UX/UI
+
+> **El agente ahora puede diseñar interfaces al mismo nivel que escribe código.**
+
+Además de las 8 skills de ingeniería, ahora se incluyen **2 skills especializadas en diseño** que se instalan de forma opcional durante el setup:
+
+| ID | Skill | Qué hace |
+|---|---|---|
+| `CLR` | **deepseek-color** | Razonamiento cromático basado en el contexto del producto. No elige colores porque "se ven bien" — los **deriva** del sector, audiencia, y emociones que el producto necesita comunicar. Cubre psicología del color, sistemas de color con roles semánticos, integración con Tailwind/shadcn, y validación de contraste WCAG. |
+| `DSN` | **deepseek-design** | Protocolo de diseño UI/UX perfeccionista y mobile-first. Garantiza que cada componente funcione en 375px antes de escalar a desktop. Cubre uso correcto de shadcn/ui, tokens semánticos, responsive obligatorio, accesibilidad, micro-interacciones, estados vacíos, skeletons, y un checklist de calidad final que no deja nada al azar. |
+
+Estas skills solo se activan en tareas que involucran frontend o interfaces — no se cargan para tareas de backend, infraestructura, o lógica de negocio.
 
 ---
 
@@ -30,20 +45,26 @@ La solución: un **AGENTS.md** con un **Protocolo de Activación Selectiva (PAS)
 npx deepseek-skills
 ```
 
-Eso es todo. Se copian dos cosas a tu proyecto:
+Eso es todo. El CLI interactivo te guía paso a paso:
+
+1. Se copian `AGENTS.md` y `.agents/.skills/skills/` a tu proyecto
+2. Te pregunta si tu proyecto necesita las **skills de diseño UX/UI**
+3. Si decís que sí, se incluyen `deepseek-color` y `deepseek-design`
+4. Si decís que no, se instalan solo las 8 skills de ingeniería
 
 | Archivo | Descripción |
 |---|---|
 | `AGENTS.md` | Directiva principal del agente — protocolo de activación selectiva |
-| `.agents/.skills/skills/` | Las 8 skills universales |
+| `.agents/.skills/skills/` | Las skills seleccionadas (8 core + 2 diseño opcionales) |
 
 ### Opciones
 
 ```bash
 npx deepseek-skills            # Instalar en el directorio actual
 npx deepseek-skills --force    # Sobrescribir si ya existen
-npx deepseek-skills --help     # Ver ayuda
+npx deepseek-skills add        # Añadir skills sin borrar las existentes
 npx deepseek-skills list       # Listar las skills con tamaños
+npx deepseek-skills --help     # Ver ayuda
 ```
 
 > **Alternativa (desde GitHub directo):**
@@ -54,6 +75,8 @@ npx deepseek-skills list       # Listar las skills con tamaños
 ---
 
 ## Skills incluidas
+
+### Skills de ingeniería (core)
 
 | ID | Skill | Dominio | Cuándo se activa |
 |---|---|---|---|
@@ -66,17 +89,24 @@ npx deepseek-skills list       # Listar las skills con tamaños
 | `REV` | **deepseek-review** | Code review | Al revisar código propio o ajeno |
 | `TST` | **deepseek-testing** | Testing | Al escribir o diseñar tests |
 
+### Skills de diseño UX/UI (opcionales)
+
+| ID | Skill | Dominio | Cuándo se activa |
+|---|---|---|---|
+| `CLR` | **deepseek-color** | Razonamiento cromático | Al definir paletas de color para una interfaz o marca |
+| `DSN` | **deepseek-design** | UI/UX perfeccionista | Al crear o modificar componentes visuales, páginas o layouts |
+
 ---
 
 ## Cómo funciona
 
 ### El problema
 
-DeepSeek R1 tiene un contexto limitado. Cargar las 8 skills (~97 KB total) consume una parte significativa de la ventana disponible, dejando poco espacio para el código del proyecto.
+DeepSeek R1 tiene un contexto limitado. Cargar las 10 skills (~150 KB total) consume una parte significativa de la ventana disponible, dejando poco espacio para el código del proyecto.
 
 ### La solución: Activación Selectiva
 
-El `AGENTS.md` define 8 categorías de tareas. Cada categoría activa **solo las skills que necesita**:
+El `AGENTS.md` define 9 categorías de tareas. Cada categoría activa **solo las skills que necesita**:
 
 ```
 BUILD   → RSN + CQL + (ARC si es multi-capa)
@@ -87,6 +117,7 @@ REVIEW  → RSN + REV
 TEST    → RSN + TST + (CQL para validar)
 CONTEXT → RSN + CTX
 PLAN    → RSN + ARC
+DESIGN  → RSN + CQL + DSN + (CLR si hay decisiones de color)
 ```
 
 El modelo clasifica la tarea en thinking mode, declara qué skills activa, las lee completas, y las ejecuta a fondo. **Máxima potencia, mínimo desperdicio.**
@@ -98,13 +129,13 @@ Tarea del usuario
        │
        ▼
 ┌─────────────────┐
-│  Clasificar     │  ← ¿BUILD? ¿FIX? ¿EVOLVE? ...
+│  Clasificar     │  ← ¿BUILD? ¿FIX? ¿DESIGN? ...
 │  la tarea       │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│  Activar skills │  ← Solo 2-3 de las 8
+│  Activar skills │  ← Solo 2-3 de las 10
 │  necesarias     │
 └────────┬────────┘
          │
@@ -164,7 +195,7 @@ Decidí si querés versionar las skills:
 | Sección | Contenido |
 |---|---|
 | **§0** | Identidad del agente y directivas base |
-| **§1** | Mapa de las 8 skills |
+| **§1** | Mapa de las 10 skills (8 core + 2 diseño) |
 | **§2** | Taxonomía: IDs, dominios, dependencias entre skills |
 | **§3** | **Protocolo de Activación Selectiva (PAS)** — el core |
 | **§4** | Resumen de las fases de razonamiento obligatorias |
@@ -202,6 +233,12 @@ Revisión por capas: corrección → seguridad → contratos → mantenibilidad 
 ### `TST` — Testing
 Qué testear y qué no, patrón AAA, casos edge obligatorios, mocking correcto, tests unitarios vs integración, y detección de tests que dan falsa seguridad.
 
+### `CLR` — Color 🆕
+Razonamiento cromático derivado del contexto del producto. Cubre las 5 preguntas de contexto, psicología del color por sector (EdTech, Salud, Fintech, SaaS, E-commerce, Gaming), construcción de sistemas de color con roles semánticos (brand, neutral, success, warning, error), regla 60-30-10, dark mode correcto, integración con Tailwind y shadcn, y validación de contraste WCAG AA/AAA.
+
+### `DSN` — Design 🆕
+Protocolo de diseño UI/UX completo con enfoque mobile-first obligatorio. Define jerarquía visual antes de implementar, uso correcto de cada componente de shadcn/ui (con tablas de referencia), patrones de layout responsive (dashboard, grids, stack/row), todos los estados de UX (loading, empty, error, hover, focus, disabled), micro-interacciones con propósito, accesibilidad no opcional (touch targets 44px+, ARIA, focus ring), y un checklist de calidad de 30+ puntos.
+
 ---
 
 ## FAQ
@@ -216,11 +253,15 @@ Sí. Creá un nuevo `SKILL.md` en `.agents/.skills/skills/tu-skill/` y registral
 
 ### ¿Las skills son para un stack específico?
 
-No. Son universales. Los ejemplos usan TypeScript pero los principios aplican a cualquier lenguaje y framework. Para convenciones específicas de tu stack, usá `DEEPSEEK_CONTEXT.md`.
+No. Son universales. Los ejemplos usan TypeScript pero los principios aplican a cualquier lenguaje y framework. Las skills de diseño (`CLR`, `DSN`) incluyen integración con Tailwind CSS y shadcn/ui pero el razonamiento aplica a cualquier stack de frontend. Para convenciones específicas de tu stack, usá `DEEPSEEK_CONTEXT.md`.
 
 ### ¿Puedo modificar las skills?
 
 Son tuyas. Modificalas libremente. Si encontrás mejoras, abrí un PR.
+
+### ¿Las skills de diseño son obligatorias?
+
+No. Durante la instalación, el CLI te pregunta si tu proyecto necesita skills de diseño UX/UI. Si tu proyecto es puramente backend o infraestructura, simplemente respondé "No" y se instalan solo las 8 skills de ingeniería.
 
 ---
 
